@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Aplicação de To-Do List com Local Storage">
+    <meta name="keywords" content="to-do, tarefas, produtividade, lista">
+    <title>To-Do List - Unicive</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --cor-primaria: #003D7A;
+            --cor-secundaria: #FF8C00;
+            --cor-fundo: #F5F5F5;
+            --cor-texto: #333333;
+            --cor-branco: #FFFFFF;
+            --cor-cinza: #E8E8E8;
+            --cor-sucesso: #4CAF50;
+            --cor-erro: #F44336;
+            --cor-aviso: #FF9800;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--cor-texto);
+            background-color: var(--cor-fundo);
+            min-height: 100vh;
+        }
+
+        /* ===== HEADER ===== */
+        header {
+            background-color: var(--cor-primaria);
+            color: var(--cor-branco);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .logo span {
+            color: var(--cor-secundaria);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--cor-branco);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            color: var(--cor-secundaria);
+        }
+
+        /* ===== CONTAINER PRINCIPAL ===== */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--cor-primaria) 0%, #002a55 100%);
+            color: var(--cor-branco);
+            padding: 3rem 2rem;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 3rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero-section h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero-section p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        /* ===== SEÇÃO PRINCIPAL ===== */
+        .main-section {
+            background-color: var(--cor-branco);
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .main-section h2 {
+            color: var(--cor-primaria);
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+
+        .main-section h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background-color: var(--cor-secundaria);
+            border-radius: 2px;
+        }
+
+        /* ===== FORMULÁRIO ===== */
+        .form-container {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .form-grupo {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .form-grupo label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--cor-primaria);
+            font-size: 0.9rem;
+        }
+
+        .form-grupo input,
+        .form-grupo select {
+            padding: 0.8rem;
+            border: 2px solid var(--cor-cinza);
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-grupo input:focus,
+        .form-grupo select:focus {
+            outline: none;
+            border-color: var(--cor-secundaria);
+            box-shadow: 0 0 5px rgba(255, 140, 0, 0.2);
+        }
+
+        .btn-adicionar {
+            background-color: var(--cor-secundaria);
+            color: var(--cor-branco);
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            align-self: flex-end;
+            min-height: 45px;
+        }
+
+        .btn-adicionar:hover {
+            background-color: #FF7700;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 140, 0, 0.3);
+        }
+
+        .btn-adicionar:active {
+            transform: translateY(0);
+        }
+
+        /* ===== FILTROS ===== */
+        .filtros {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn-filtro {
+            padding: 0.6rem 1.5rem;
+            border: 2px solid var(--cor-cinza);
+            background-color: var(--cor-branco);
+            color: var(--cor-texto);
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .btn-filtro:hover {
+            border-color: var(--cor-secundaria);
+            color: var(--cor-secundaria);
+        }
+
+        .btn-filtro.ativo {
+            background-color: var(--cor-secundaria);
+            color: var(--cor-branco);
+            border-color: var(--cor-secundaria);
+        }
+
+        /* ===== LISTA DE TAREFAS ===== */
+        .lista-tarefas {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .tarefa-item {
+            background-color: var(--cor-fundo);
+            padding: 1.5rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--cor-primaria);
+        }
+
+        .tarefa-item:hover {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transform: translateX(5px);
+        }
+
+        .tarefa-item.concluida {
+            opacity: 0.7;
+            border-left-color: var(--cor-sucesso);
+        }
+
+        .tarefa-item.concluida .tarefa-texto {
+            text-decoration: line-through;
+            color: var(--cor-cinza);
+        }
+
+        .tarefa-checkbox {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            accent-color: var(--cor-secundaria);
+        }
+
+        .tarefa-conteudo {
+            flex: 1;
+        }
+
+        .tarefa-texto {
+            font-size: 1rem;
+            color: var(--cor-texto);
+            margin-bottom: 0.5rem;
+            word-break: break-word;
+        }
+
+        .tarefa-meta {
+            font-size: 0.85rem;
+            color: var(--cor-cinza);
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .tarefa-prioridade {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 3px;
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+
+        .tarefa-prioridade.alta {
+            background-color: rgba(244, 67, 54, 0.2);
+            color: var(--cor-erro);
+        }
+
+        .tarefa-prioridade.media {
+            background-color: rgba(255, 152, 0, 0.2);
+            color: var(--cor-aviso);
+        }
+
+        .tarefa-prioridade.baixa {
+            background-color: rgba(76, 175, 80, 0.2);
+            color: var(--cor-sucesso);
+        }
+
+        .tarefa-data {
+            font-size: 0.85rem;
+            color: var(--cor-primaria);
+        }
+
+        .tarefa-acoes {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-acao {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-editar {
+            background-color: var(--cor-primaria);
+            color: var(--cor-branco);
+        }
+
+        .btn-editar:hover {
+            background-color: #002a55;
+            transform: scale(1.05);
+        }
+
+        .btn-deletar {
+            background-color: var(--cor-erro);
+            color: var(--cor-branco);
+        }
+
+        .btn-deletar:hover {
+            background-color: #D32F2F;
+            transform: scale(1.05);
+        }
+
+        /* ===== MODAL ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.ativo {
+            display: flex;
+        }
+
+        .modal-conteudo {
+            background-color: var(--cor-branco);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 500px;
+            width: 90%;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            color: var(--cor-primaria);
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: bold;
+        }
+
+        .modal-body {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .btn-modal {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-modal-salvar {
+            background-color: var(--cor-secundaria);
+            color: var(--cor-branco);
+        }
+
+        .btn-modal-salvar:hover {
+            background-color: #FF7700;
+        }
+
+        .btn-modal-cancelar {
+            background-color: var(--cor-cinza);
+            color: var(--cor-texto);
+        }
+
+        .btn-modal-cancelar:hover {
+            background-color: #D8D8D8;
+        }
+
+        /* ===== MENSAGENS ===== */
+        .vazio {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--cor-cinza);
+        }
+
+        .vazio-icone {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .vazio p {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .estatisticas {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--cor-primaria), var(--cor-secundaria));
+            color: var(--cor-branco);
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-numero {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* ===== RESPONSIVIDADE ===== */
+        @media (max-width: 768px) {
+            .hero-section h1 {
+                font-size: 1.8rem;
+            }
+
+            .form-container {
+                flex-direction: column;
+            }
+
+            .btn-adicionar {
+                align-self: stretch;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .tarefa-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .tarefa-acoes {
+                width: 100%;
+                justify-content: flex-end;
+            }
+
+            .modal-conteudo {
+                width: 95%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .main-section {
+                padding: 1.5rem;
+            }
+
+            .hero-section {
+                padding: 2rem 1rem;
+            }
+
+            .tarefa-texto {
+                font-size: 0.95rem;
+            }
+
+            .filtros {
+                justify-content: flex-start;
+                overflow-x: auto;
+                padding-bottom: 0.5rem;
+            }
+
+            .btn-filtro {
+                white-space: nowrap;
+                flex-shrink: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <div class="header-container">
+            <div class="logo">TO-DO <span>LIST</span></div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html">← Voltar ao Site</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- CONTAINER PRINCIPAL -->
+    <div class="container">
+
+        <!-- HERO SECTION -->
+        <section class="hero-section">
+            <h1>📋 Organize suas Tarefas</h1>
+            <p>Gerencie suas atividades com eficiência e produtividade</p>
+        </section>
+
+        <!-- SEÇÃO PRINCIPAL -->
+        <section class="main-section">
+            <h2>Minhas Tarefas</h2>
+
+            <!-- ESTATÍSTICAS -->
+            <div class="estatisticas">
+                <div class="stat-card">
+                    <div class="stat-numero" id="totalTarefas">0</div>
+                    <div class="stat-label">Total</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-numero" id="tarefasAtivas">0</div>
+                    <div class="stat-label">Ativas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-numero" id="tarefasConcluidas">0</div>
+                    <div class="stat-label">Concluídas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-numero" id="percentualConclusao">0%</div>
+                    <div class="stat-label">Progresso</div>
+                </div>
+            </div>
+
+            <!-- FORMULÁRIO -->
+            <div class="form-container">
+                <div class="form-grupo" style="flex: 2;">
+                    <label for="inputTarefa">Descrição da Tarefa</label>
+                    <input type="text" id="inputTarefa" placeholder="Digite sua tarefa aqui...">
+                </div>
+                <div class="form-grupo">
+                    <label for="inputData">Data</label>
+                    <input type="date" id="inputData">
+                </div>
+                <div class="form-grupo">
+                    <label for="inputPrioridade">Prioridade</label>
+                    <select id="inputPrioridade">
+                        <option value="baixa">Baixa</option>
+                        <option value="media" selected>Média</option>
+                        <option value="alta">Alta</option>
+                    </select>
+                </div>
+                <button class="btn-adicionar" id="btnAdicionar">+ Adicionar</button>
+            </div>
+
+            <!-- FILTROS -->
+            <div class="filtros">
+                <button class="btn-filtro ativo" data-filtro="todas">Todas</button>
+                <button class="btn-filtro" data-filtro="ativas">Ativas</button>
+                <button class="btn-filtro" data-filtro="concluidas">Concluídas</button>
+            </div>
+
+            <!-- LISTA DE TAREFAS -->
+            <div class="lista-tarefas" id="listaTarefas">
+                <div class="vazio">
+                    <div class="vazio-icone">📝</div>
+                    <p>Nenhuma tarefa ainda</p>
+                    <p style="font-size: 0.9rem;">Crie sua primeira tarefa acima!</p>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- MODAL EDITAR -->
+    <div class="modal" id="modalEditar">
+        <div class="modal-conteudo">
+            <div class="modal-header">Editar Tarefa</div>
+            <div class="modal-body">
+                <div class="form-grupo">
+                    <label for="modalTarefa">Descrição</label>
+                    <input type="text" id="modalTarefa">
+                </div>
+                <div class="form-grupo">
+                    <label for="modalData">Data</label>
+                    <input type="date" id="modalData">
+                </div>
+                <div class="form-grupo">
+                    <label for="modalPrioridade">Prioridade</label>
+                    <select id="modalPrioridade">
+                        <option value="baixa">Baixa</option>
+                        <option value="media">Média</option>
+                        <option value="alta">Alta</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-modal-cancelar" id="btnCancelar">Cancelar</button>
+                <button class="btn-modal btn-modal-salvar" id="btnSalvar">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        // ===== VARIÁVEIS GLOBAIS =====
+        let tarefas = [];
+        let filtroAtual = 'todas';
+        let tarefaEditando = null;
+
+        // ===== FUNÇÕES AUXILIARES =====
+        function salvarNoLocalStorage() {
+            localStorage.setItem('tarefas', JSON.stringify(tarefas));
+        }
+
+        function carregarDoLocalStorage() {
+            const dados = localStorage.getItem('tarefas');
+            if (dados) {
+                tarefas = JSON.parse(dados);
+            }
+        }
+
+        function gerarId() {
+            return Date.now();
+        }
+
+        function formatarData(data) {
+            if (!data) return '';
+            const d = new Date(data);
+            return d.toLocaleDateString('pt-BR');
+        }
+
+        function atualizarEstatisticas() {
+            const total = tarefas.length;
+            const concluidas = tarefas.filter(t => t.concluida).length;
+            const ativas = total - concluidas;
+            const percentual = total > 0 ? Math.round((concluidas / total) * 100) : 0;
+
+            document.getElementById('totalTarefas').textContent = total;
+            document.getElementById('tarefasAtivas').textContent = ativas;
+            document.getElementById('tarefasConcluidas').textContent = concluidas;
+            document.getElementById('percentualConclusao').textContent = percentual + '%';
+        }
+
+        function filtrarTarefas() {
+            let tarefasFiltradas = tarefas;
+
+            if (filtroAtual === 'ativas') {
+                tarefasFiltradas = tarefas.filter(t => !t.concluida);
+            } else if (filtroAtual === 'concluidas') {
+                tarefasFiltradas = tarefas.filter(t => t.concluida);
+            }
+
+            return tarefasFiltradas.sort((a, b) => {
+                const prioridadeOrder = { alta: 1, media: 2, baixa: 3 };
+                return prioridadeOrder[a.prioridade] - prioridadeOrder[b.prioridade];
+            });
+        }
+
+        function renderizarTarefas() {
+            const listaTarefas = document.getElementById('listaTarefas');
+            const tarefasFiltradas = filtrarTarefas();
+
+            if (tarefasFiltradas.length === 0) {
+                listaTarefas.innerHTML = `
+                    <div class="vazio">
+                        <div class="vazio-icone">📭</div>
+                        <p>Nenhuma tarefa ${filtroAtual === 'todas' ? '' : filtroAtual}</p>
+                        <p style="font-size: 0.9rem;">Crie uma nova tarefa para começar!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            listaTarefas.innerHTML = tarefasFiltradas.map(tarefa => `
+                <div class="tarefa-item ${tarefa.concluida ? 'concluida' : ''}">
+                    <input type="checkbox" class="tarefa-checkbox" 
+                        ${tarefa.concluida ? 'checked' : ''} 
+                        onchange="alternarTarefa(${tarefa.id})">
+                    <div class="tarefa-conteudo">
+                        <div class="tarefa-texto">${tarefa.texto}</div>
+                        <div class="tarefa-meta">
+                            <span class="tarefa-prioridade ${tarefa.prioridade}">
+                                ${tarefa.prioridade.toUpperCase()}
+                            </span>
+                            ${tarefa.data ? `<span class="tarefa-data">📅 ${formatarData(tarefa.data)}</span>` : ''}
+                        </div>
+                    </div>
+                    <div class="tarefa-acoes">
+                        <button class="btn-acao btn-editar" onclick="abrirModalEditar(${tarefa.id})">
+                            ✏️ Editar
+                        </button>
+                        <button class="btn-acao btn-deletar" onclick="deletarTarefa(${tarefa.id})">
+                            🗑️ Deletar
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ===== OPERAÇÕES COM TAREFAS =====
+        function adicionarTarefa() {
+            const inputTarefa = document.getElementById('inputTarefa');
+            const inputData = document.getElementById('inputData');
+            const inputPrioridade = document.getElementById('inputPrioridade');
+
+            const texto = inputTarefa.value.trim();
+            const data = inputData.value;
+            const prioridade = inputPrioridade.value;
+
+            if (!texto) {
+                alert('Por favor, digite uma tarefa!');
+                return;
+            }
+
+            const novaTarefa = {
+                id: gerarId(),
+                texto,
+                data,
+                prioridade,
+                concluida: false,
+                dataCriacao: new Date().toISOString()
+            };
+
+            tarefas.unshift(novaTarefa);
+            salvarNoLocalStorage();
+            renderizarTarefas();
+            atualizarEstatisticas();
+
+            inputTarefa.value = '';
+            inputData.value = '';
+            inputPrioridade.value = 'media';
+            inputTarefa.focus();
+        }
+
+        function alternarTarefa(id) {
+            const tarefa = tarefas.find(t => t.id === id);
+            if (tarefa) {
+                tarefa.concluida = !tarefa.concluida;
+                salvarNoLocalStorage();
+                renderizarTarefas();
+                atualizarEstatisticas();
+            }
+        }
+
+        function deletarTarefa(id) {
+            if (confirm('Tem certeza que deseja deletar esta tarefa?')) {
+                tarefas = tarefas.filter(t => t.id !== id);
+                salvarNoLocalStorage();
+                renderizarTarefas();
+                atualizarEstatisticas();
+            }
+        }
+
+        function abrirModalEditar(id) {
+            tarefaEditando = tarefas.find(t => t.id === id);
+            if (tarefaEditando) {
+                document.getElementById('modalTarefa').value = tarefaEditando.texto;
+                document.getElementById('modalData').value = tarefaEditando.data;
+                document.getElementById('modalPrioridade').value = tarefaEditando.prioridade;
+                document.getElementById('modalEditar').classList.add('ativo');
+                document.getElementById('modalTarefa').focus();
+            }
+        }
+
+        function fecharModal() {
+            document.getElementById('modalEditar').classList.remove('ativo');
+            tarefaEditando = null;
+        }
+
+        function salvarEdicao() {
+            if (tarefaEditando) {
+                const novoTexto = document.getElementById('modalTarefa').value.trim();
+                if (!novoTexto) {
+                    alert('A tarefa não pode estar vazia!');
+                    return;
+                }
+
+                tarefaEditando.texto = novoTexto;
+                tarefaEditando.data = document.getElementById('modalData').value;
+                tarefaEditando.prioridade = document.getElementById('modalPrioridade').value;
+
+                salvarNoLocalStorage();
+                renderizarTarefas();
+                fecharModal();
+            }
+        }
+
+        // ===== EVENT LISTENERS =====
+        document.getElementById('btnAdicionar').addEventListener('click', adicionarTarefa);
+        document.getElementById('inputTarefa').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') adicionarTarefa();
+        });
+
+        document.querySelectorAll('.btn-filtro').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.btn-filtro').forEach(b => b.classList.remove('ativo'));
+                e.target.classList.add('ativo');
+                filtroAtual = e.target.dataset.filtro;
+                renderizarTarefas();
+            });
+        });
+
+        document.getElementById('btnCancelar').addEventListener('click', fecharModal);
+        document.getElementById('btnSalvar').addEventListener('click', salvarEdicao);
+
+        document.getElementById('modalEditar').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('modalEditar')) {
+                fecharModal();
+            }
+        });
+
+        // ===== INICIALIZAÇÃO =====
+        carregarDoLocalStorage();
+        renderizarTarefas();
+        atualizarEstatisticas();
+    </script>
+
+</body>
+</html>
