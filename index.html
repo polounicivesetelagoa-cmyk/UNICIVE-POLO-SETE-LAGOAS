@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Unicive Polo Sete Lagoas - Cursos de Graduação, Pós-Graduação, Tecnólogo e Técnico">
+    <meta name="keywords" content="educação, cursos, graduação, pós-graduação, Sete Lagoas">
+    <title>Unicive Polo Sete Lagoas - Cursos Superiores e Técnicos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --cor-primaria: #003D7A;
+            --cor-secundaria: #FF8C00;
+            --cor-fundo: #F5F5F5;
+            --cor-texto: #333333;
+            --cor-branco: #FFFFFF;
+            --cor-cinza: #E8E8E8;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--cor-texto);
+            background-color: var(--cor-fundo);
+        }
+
+        /* ===== HEADER ===== */
+        header {
+            background-color: var(--cor-primaria);
+            color: var(--cor-branco);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .logo span {
+            color: var(--cor-secundaria);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: var(--cor-branco);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-weight: 500;
+        }
+
+        nav a:hover {
+            color: var(--cor-secundaria);
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--cor-branco);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero {
+            background: linear-gradient(135deg, var(--cor-primaria) 0%, #002a55 100%);
+            color: var(--cor-branco);
+            padding: 6rem 2rem;
+            text-align: center;
+            min-height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 140, 0, 0.1);
+            animation: slide 15s linear infinite;
+        }
+
+        @keyframes slide {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .btn-principal {
+            background-color: var(--cor-secundaria);
+            color: var(--cor-branco);
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: bold;
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+
+        .btn-principal:hover {
+            background-color: #FF7700;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 140, 0, 0.3);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== SEÇÕES DE CURSOS ===== */
+        .secao-cursos {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .secao-cursos h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            color: var(--cor-primaria);
+            margin-bottom: 3rem;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+
+        .secao-cursos h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background-color: var(--cor-secundaria);
+            border-radius: 2px;
+        }
+
+        .grid-cursos {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .card-curso {
+            background-color: var(--cor-branco);
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .card-curso:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 61, 122, 0.2);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--cor-primaria), var(--cor-secundaria));
+            color: var(--cor-branco);
+            padding: 2rem 1.5rem;
+            text-align: center;
+        }
+
+        .card-header h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-header p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .card-body {
+            padding: 2rem 1.5rem;
+        }
+
+        .card-body ul {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-body li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .card-body li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--cor-secundaria);
+            font-weight: bold;
+        }
+
+        .btn-saiba-mais {
+            background-color: var(--cor-primaria);
+            color: var(--cor-branco);
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .btn-saiba-mais:hover {
+            background-color: var(--cor-secundaria);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* ===== SEÇÃO SOBRE ===== */
+        .secao-sobre {
+            background-color: var(--cor-branco);
+            padding: 4rem 2rem;
+        }
+
+        .sobre-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .sobre-texto h2 {
+            color: var(--cor-primaria);
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .sobre-texto p {
+            color: var(--cor-texto);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        .sobre-imagem {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, var(--cor-primaria), var(--cor-secundaria));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 4rem;
+        }
+
+        /* ===== SEÇÃO DIFERENCIAIS ===== */
+        .secao-diferenciais {
+            padding: 4rem 2rem;
+            background-color: var(--cor-fundo);
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .secao-diferenciais h2 {
+            text-align: center;
+            color: var(--cor-primaria);
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+
+        .secao-diferenciais h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background-color: var(--cor-secundaria);
+            border-radius: 2px;
+        }
+
+        .grid-diferenciais {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .diferencial-item {
+            background-color: var(--cor-branco);
+            padding: 2rem;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .diferencial-item:hover {
+            box-shadow: 0 10px 25px rgba(0, 61, 122, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .diferencial-icone {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .diferencial-item h3 {
+            color: var(--cor-primaria);
+            margin-bottom: 0.5rem;
+        }
+
+        .diferencial-item p {
+            color: var(--cor-texto);
+            line-height: 1.6;
+        }
+
+        /* ===== SEÇÃO CONTATO ===== */
+        .secao-contato {
+            background-color: var(--cor-primaria);
+            color: var(--cor-branco);
+            padding: 4rem 2rem;
+        }
+
+        .contato-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+        }
+
+        .contato-info h2 {
+            font-size: 2.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-item {
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .info-item-icone {
+            font-size: 1.5rem;
+            min-width: 30px;
+        }
+
+        .info-item-texto h3 {
+            margin-bottom: 0.5rem;
+        }
+
+        .info-item-texto p {
+            opacity: 0.9;
+        }
+
+        .btn-whatsapp {
+            background-color: #25D366;
+            color: var(--cor-branco);
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .btn-whatsapp:hover {
+            background-color: #1EBE57;
+            transform: scale(1.05);
+        }
+
+        /* FORMULÁRIO DE CONTATO */
+        .formulario-contato {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .formulario-contato h3 {
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .form-grupo {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-grupo label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-grupo input,
+        .form-grupo textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+
+        .form-grupo textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .btn-enviar {
+            background-color: var(--cor-secundaria);
+            color: var(--cor-branco);
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-enviar:hover {
+            background-color: #FF7700;
+            transform: translateY(-3px);
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background-color: #002a55;
+            color: var(--cor-branco);
+            padding: 2rem;
+            text-align: center;
+            border-top: 3px solid var(--cor-secundaria);
+        }
+
+        footer p {
+            margin-bottom: 0.5rem;
+        }
+
+        /* ===== RESPONSIVIDADE ===== */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            nav ul {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                right: 0;
+                background-color: var(--cor-primaria);
+                padding: 1rem;
+                gap: 0;
+            }
+
+            nav ul.ativa {
+                display: flex;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            nav li {
+                padding: 1rem 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .sobre-container {
+                grid-template-columns: 1fr;
+            }
+
+            .contato-container {
+                grid-template-columns: 1fr;
+            }
+
+            .secao-cursos h2,
+            .secao-diferenciais h2 {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 1.5rem;
+            }
+
+            .btn-principal {
+                padding: 0.8rem 2rem;
+                font-size: 1rem;
+            }
+
+            header {
+                padding: 1rem;
+            }
+
+            .header-container {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <div class="header-container">
+            <div class="logo">UNIC<span>IVE</span></div>
+            <nav>
+                <ul id="menu">
+                    <li><a href="#cursos">Cursos</a></li>
+                    <li><a href="#sobre">Sobre</a></li>
+                    <li><a href="#diferenciais">Diferenciais</a></li>
+                    <li><a href="#contato">Contato</a></li>
+                    <li><a href="todo-list.html">📋 To-Do List</a></li>
+                </ul>
+            </nav>
+            <button class="menu-toggle" id="menuToggle">☰</button>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Bem-vindo à Unicive Polo Sete Lagoas</h1>
+            <p>Educação de qualidade em Graduação, Pós-Graduação, Tecnólogo e Técnico</p>
+            <a href="#contato" class="btn-principal">Saiba Mais</a>
+        </div>
+    </section>
+
+    <!-- SEÇÃO CURSOS -->
+    <section id="cursos" class="secao-cursos">
+        <h2>Nossos Cursos</h2>
+        <div class="grid-cursos">
+            <!-- Graduação -->
+            <div class="card-curso">
+                <div class="card-header">
+                    <h3>Graduação</h3>
+                    <p>Bacharelado e Licenciatura</p>
+                </div>
+                <div class="card-body">
+                    <ul>
+                        <li>Duração: 4 anos</li>
+                        <li>Diploma reconhecido</li>
+                        <li>Professores qualificados</li>
+                        <li>Infraestrutura moderna</li>
+                    </ul>
+                    <button class="btn-saiba-mais" onclick="alert('Detalhes dos cursos de Graduação')">Saiba Mais</button>
+                </div>
+            </div>
+
+            <!-- Pós-Graduação -->
+            <div class="card-curso">
+                <div class="card-header">
+                    <h3>Pós-Graduação</h3>
+                    <p>Especialização e Mestrado</p>
+                </div>
+                <div class="card-body">
+                    <ul>
+                        <li>Duração: 6-24 meses</li>
+                        <li>Formação avançada</li>
+                        <li>Atuação profissional</li>
+                        <li>Certificação reconhecida</li>
+                    </ul>
+                    <button class="btn-saiba-mais" onclick="alert('Detalhes dos cursos de Pós-Graduação')">Saiba Mais</button>
+                </div>
+            </div>
+
+            <!-- Tecnólogo -->
+            <div class="card-curso">
+                <div class="card-header">
+                    <h3>Tecnólogo</h3>
+                    <p>Ensino Superior Tecnológico</p>
+                </div>
+                <div class="card-body">
+                    <ul>
+                        <li>Duração: 2-3 anos</li>
+                        <li>Formação prática</li>
+                        <li>Mercado de trabalho</li>
+                        <li>Diplomas reconhecidos</li>
+                    </ul>
+                    <button class="btn-saiba-mais" onclick="alert('Detalhes dos cursos Tecnólogo')">Saiba Mais</button>
+                </div>
+            </div>
+
+            <!-- Técnico -->
+            <div class="card-curso">
+                <div class="card-header">
+                    <h3>Técnico</h3>
+                    <p>Educação Profissional</p>
+                </div>
+                <div class="card-body">
+                    <ul>
+                        <li>Duração: 1-2 anos</li>
+                        <li>Prático e objetivo</li>
+                        <li>Empregabilidade</li>
+                        <li>Certificado profissional</li>
+                    </ul>
+                    <button class="btn-saiba-mais" onclick="alert('Detalhes dos cursos Técnico')">Saiba Mais</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEÇÃO SOBRE -->
+    <section id="sobre" class="secao-sobre">
+        <div class="sobre-container">
+            <div class="sobre-texto">
+                <h2>Sobre o Polo Sete Lagoas</h2>
+                <p>O Polo Unicive em Sete Lagoas é um centro de excelência em educação, oferecendo formação de qualidade em diferentes níveis. Nossa instituição conta com infraestrutura moderna, professores experientes e uma metodologia inovadora que prepara os alunos para o mercado de trabalho.</p>
+                <p>Com mais de uma década de atuação, a Unicive é reconhecida pela qualidade de seus cursos e pelo sucesso de seus egressos em diversas áreas profissionais.</p>
+            </div>
+            <div class="sobre-imagem">
+                📚
+            </div>
+        </div>
+    </section>
+
+    <!-- SEÇÃO DIFERENCIAIS -->
+    <section id="diferenciais" class="secao-diferenciais">
+        <h2>Por Que Escolher a Unicive?</h2>
+        <div class="grid-diferenciais">
+            <div class="diferencial-item">
+                <div class="diferencial-icone">👨‍🏫</div>
+                <h3>Professores Qualificados</h3>
+                <p>Corpo docente formado por profissionais com experiência de mercado e titulação acadêmica.</p>
+            </div>
+            <div class="diferencial-item">
+                <div class="diferencial-icone">🏫</div>
+                <h3>Infraestrutura Moderna</h3>
+                <p>Laboratórios, salas de aula e espaços equipados com tecnologia de ponta.</p>
+            </div>
+            <div class="diferencial-item">
+                <div class="diferencial-icone">💼</div>
+                <h3>Oportunidades de Trabalho</h3>
+                <p>Parcerias com empresas para estágios e colocação profissional de alunos.</p>
+            </div>
+            <div class="diferencial-item">
+                <div class="diferencial-icone">🎓</div>
+                <h3>Certificação Reconhecida</h3>
+                <p>Diplomas e certificados reconhecidos pelo MEC e mercado profissional.</p>
+            </div>
+            <div class="diferencial-item">
+                <div class="diferencial-icone">🌐</div>
+                <h3>Educação Acessível</h3>
+                <p>Mensalidades competitivas e opções de bolsa para alunos qualificados.</p>
+            </div>
+            <div class="diferencial-item">
+                <div class="diferencial-icone">⭐</div>
+                <h3>Suporte ao Aluno</h3>
+                <p>Acompanhamento pedagógico e suporte contínuo durante todo o curso.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEÇÃO CONTATO -->
+    <section id="contato" class="secao-contato">
+        <div class="contato-container">
+            <div class="contato-info">
+                <h2>Entre em Contato</h2>
+                <div class="info-item">
+                    <div class="info-item-icone">📧</div>
+                    <div class="info-item-texto">
+                        <h3>Email</h3>
+                        <p>polo.setelagoas.centro@unicive.edu.br</p>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-item-icone">💬</div>
+                    <div class="info-item-texto">
+                        <h3>WhatsApp</h3>
+                        <p>+55 31 99804-8001</p>
+                    </div>
+                </div>
+                <a href="https://wa.me/5531998048001" class="btn-whatsapp" target="_blank">
+                    💬 Envie uma Mensagem
+                </a>
+            </div>
+
+            <form class="formulario-contato" id="formulario">
+                <h3>Formulário de Contato</h3>
+                <div class="form-grupo">
+                    <label for="nome">Nome Completo</label>
+                    <input type="text" id="nome" name="nome" required>
+                </div>
+                <div class="form-grupo">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-grupo">
+                    <label for="telefone">Telefone</label>
+                    <input type="tel" id="telefone" name="telefone" placeholder="(00) 00000-0000">
+                </div>
+                <div class="form-grupo">
+                    <label for="assunto">Assunto</label>
+                    <input type="text" id="assunto" name="assunto" required>
+                </div>
+                <div class="form-grupo">
+                    <label for="mensagem">Mensagem</label>
+                    <textarea id="mensagem" name="mensagem" required></textarea>
+                </div>
+                <button type="submit" class="btn-enviar">Enviar Mensagem</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>&copy; 2026 Unicive Polo Sete Lagoas. Todos os direitos reservados.</p>
+        <p>Email: polo.setelagoas.centro@unicive.edu.br | WhatsApp: +55 31 99804-8001</p>
+    </footer>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        // Menu Hambúrguer
+        const menuToggle = document.getElementById('menuToggle');
+        const menu = document.getElementById('menu');
+
+        menuToggle.addEventListener('click', () => {
+            menu.classList.toggle('ativa');
+        });
+
+        // Fechar menu ao clicar em um link
+        menu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                menu.classList.remove('ativa');
+            });
+        });
+
+        // Formulário de Contato
+        document.getElementById('formulario').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const nome = document.getElementById('nome').value;
+            const email = document.getElementById('email').value;
+            const telefone = document.getElementById('telefone').value;
+            const assunto = document.getElementById('assunto').value;
+            const mensagem = document.getElementById('mensagem').value;
+
+            // Simulação de envio (em produção, enviar para um servidor)
+            alert(`Obrigado ${nome}! Sua mensagem foi recebida.`);
+            
+            // Limpar formulário
+            this.reset();
+        });
+
+        // Scroll suave
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Animação ao entrar na viewport
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 0.6s ease forwards';
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.card-curso, .diferencial-item').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+
+</body>
+</html>
