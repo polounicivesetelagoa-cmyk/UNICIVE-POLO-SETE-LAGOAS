@@ -43,7 +43,7 @@ Bem-vindo ao repositório do site da Unicive Polo Sete Lagoas!
 
 ## 🎨 Design
 
-- Cores coordenadas: Azul primário (#003D7A) e Laranja secundário (#FF8C00)
+- Cores coordenadas: Verde primário (#02634C) e Laranja secundário (#FF8C00)
 - Totalmente responsivo
 - Animações suaves
 - Interface moderna e intuitiva
