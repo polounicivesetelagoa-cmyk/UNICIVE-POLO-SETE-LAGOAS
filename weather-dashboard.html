@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Dashboard de Clima - Previsão do Tempo em Tempo Real">
+    <meta name="keywords" content="clima, tempo, previsão, temperatura, weather">
+    <title>Weather Dashboard - Previsão do Tempo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --cor-primaria: #003D7A;
+            --cor-secundaria: #FF8C00;
+            --cor-fundo: #F5F5F5;
+            --cor-texto: #333333;
+            --cor-branco: #FFFFFF;
+            --cor-cinza: #E8E8E8;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--cor-texto);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--cor-primaria);
+            color: var(--cor-branco);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .logo span {
+            color: var(--cor-secundaria);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .busca-container {
+            background-color: var(--cor-branco);
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 2rem;
+        }
+
+        .busca-form {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .busca-grupo {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .busca-grupo label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--cor-primaria);
+        }
+
+        .busca-grupo input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid var(--cor-cinza);
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .busca-grupo input:focus {
+            outline: none;
+            border-color: var(--cor-secundaria);
+            box-shadow: 0 0 5px rgba(255, 140, 0, 0.2);
+        }
+
+        .btn-buscar {
+            background-color: var(--cor-secundaria);
+            color: var(--cor-branco);
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            min-height: 45px;
+            align-self: flex-end;
+            transition: all 0.3s ease;
+        }
+
+        .btn-buscar:hover {
+            background-color: #FF7700;
+            transform: translateY(-2px);
+        }
+
+        .mensagem {
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .mensagem.ativo {
+            display: block;
+        }
+
+        .mensagem.erro {
+            background-color: rgba(244, 67, 54, 0.1);
+            color: #F44336;
+            border-left: 4px solid #F44336;
+        }
+
+        .mensagem.sucesso {
+            background-color: rgba(76, 175, 80, 0.1);
+            color: #4CAF50;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .clima-atual {
+            background: linear-gradient(135deg, var(--cor-primaria), #002a55);
+            color: var(--cor-branco);
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 2rem;
+            display: none;
+        }
+
+        .clima-atual.ativo {
+            display: block;
+        }
+
+        .clima-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .clima-info-principal h2 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .temperatura-display {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .temperatura-grande {
+            font-size: 4rem;
+            font-weight: bold;
+        }
+
+        .condicao-icone {
+            font-size: 4rem;
+        }
+
+        .clima-detalhes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .detalhe-item {
+            text-align: center;
+        }
+
+        .detalhe-valor {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .previsao-container {
+            background-color: var(--cor-branco);
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 2rem;
+            display: none;
+        }
+
+        .previsao-container.ativo {
+            display: block;
+        }
+
+        .previsao-container h3 {
+            color: var(--cor-primaria);
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .previsao-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .previsao-card {
+            background-color: var(--cor-fundo);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--cor-secundaria);
+        }
+
+        .previsao-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .previsao-icone {
+            font-size: 2.5rem;
+            margin: 0.5rem 0;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 3rem;
+            color: var(--cor-branco);
+        }
+
+        .loading.ativo {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid var(--cor-branco);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        footer {
+            background-color: rgba(0, 0, 0, 0.3);
+            color: var(--cor-branco);
+            padding: 2rem;
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .busca-form {
+                flex-direction: column;
+            }
+
+            .btn-buscar {
+                align-self: stretch;
+            }
+
+            .temperatura-display {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .temperatura-grande {
+                font-size: 3rem;
+            }
+
+            .previsao-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <div class="logo">WEATH<span>ER</span></div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="busca-container">
+            <form class="busca-form" id="buscaForm">
+                <div class="busca-grupo">
+                    <label for="inputCidade">Buscar Cidade</label>
+                    <input type="text" id="inputCidade" placeholder="Ex: São Paulo, SP" required>
+                </div>
+                <button type="submit" class="btn-buscar">🔍 Buscar</button>
+            </form>
+        </div>
+
+        <div class="mensagem" id="mensagem"></div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Carregando dados do clima...</p>
+        </div>
+
+        <div class="clima-atual" id="climaAtual">
+            <div class="clima-header">
+                <div class="clima-info-principal">
+                    <h2 id="nomeCidade">-</h2>
+                    <p id="dataHora">-</p>
+                </div>
+                <div class="temperatura-display">
+                    <div class="condicao-icone" id="condicaoIcone">🌤️</div>
+                    <div>
+                        <div class="temperatura-grande" id="temperatura">-</div>
+                        <div id="condicaoTexto">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="clima-detalhes">
+                <div class="detalhe-item">
+                    <div class="detalhe-valor" id="sensacaoTermica">-</div>
+                    <div>Sensação Térmica</div>
+                </div>
+                <div class="detalhe-item">
+                    <div class="detalhe-valor" id="umidade">-</div>
+                    <div>Umidade</div>
+                </div>
+                <div class="detalhe-item">
+                    <div class="detalhe-valor" id="pressao">-</div>
+                    <div>Pressão</div>
+                </div>
+                <div class="detalhe-item">
+                    <div class="detalhe-valor" id="velocidadeVento">-</div>
+                    <div>Velocidade Vento</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="previsao-container" id="previsaoContainer">
+            <h3>📅 Previsão 5 Dias</h3>
+            <div class="previsao-grid" id="previsaoGrid"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Weather Dashboard | Dados: OpenWeatherMap</p>
+    </footer>
+
+    <script>
+        const API_KEY = 'b6fd43fb7b464c1c3b22b97b74e14e3f';
+        const API_BASE = 'https://api.openweathermap.org/data/2.5';
+
+        const buscaForm = document.getElementById('buscaForm');
+        const inputCidade = document.getElementById('inputCidade');
+        const mensagem = document.getElementById('mensagem');
+        const loading = document.getElementById('loading');
+        const climaAtual = document.getElementById('climaAtual');
+        const previsaoContainer = document.getElementById('previsaoContainer');
+
+        function mostrarMensagem(texto, tipo = 'info') {
+            mensagem.textContent = texto;
+            mensagem.className = `mensagem ativo ${tipo}`;
+            setTimeout(() => mensagem.classList.remove('ativo'), 5000);
+        }
+
+        function mostrarCarregamento(ativo) {
+            if (ativo) {
+                loading.classList.add('ativo');
+                climaAtual.classList.remove('ativo');
+            } else {
+                loading.classList.remove('ativo');
+            }
+        }
+
+        function getWeatherIcon(description) {
+            const desc = description.toLowerCase();
+            if (desc.includes('claro') || desc.includes('clear')) return '☀️';
+            if (desc.includes('nuvem') || desc.includes('cloud')) return '☁️';
+            if (desc.includes('chuva') || desc.includes('rain')) return '🌧️';
+            if (desc.includes('trovão') || desc.includes('thunder')) return '⛈️';
+            if (desc.includes('neve') || desc.includes('snow')) return '❄️';
+            if (desc.includes('neblina') || desc.includes('mist')) return '🌫️';
+            return '🌤️';
+        }
+
+        function formatarData(timestamp) {
+            const data = new Date(timestamp * 1000);
+            return data.toLocaleDateString('pt-BR', { 
+                weekday: 'long', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        async function buscarClima(cidade) {
+            try {
+                mostrarCarregamento(true);
+                
+                const url = `${API_BASE}/weather?q=${cidade}&appid=${API_KEY}&lang=pt_br&units=metric`;
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error('Cidade não encontrada');
+                }
+
+                const dados = await response.json();
+                exibirClimaAtual(dados);
+                await buscarPrevisao(dados.coord.lat, dados.coord.lon);
+                mostrarMensagem(`Clima atualizado para ${dados.name}!`, 'sucesso');
+                mostrarCarregamento(false);
+
+            } catch (erro) {
+                mostrarMensagem(`Erro: ${erro.message}`, 'erro');
+                mostrarCarregamento(false);
+            }
+        }
+
+        async function buscarPrevisao(latitude, longitude) {
+            try {
+                const url = `${API_BASE}/forecast?lat=${latitude}&lon=${longitude}&appid=${API_KEY}&lang=pt_br&units=metric`;
+                const response = await fetch(url);
+                const dados = await response.json();
+                exibirPrevisao(dados.list);
+            } catch (erro) {
+                console.error('Erro:', erro);
+            }
+        }
+
+        function exibirClimaAtual(dados) {
+            document.getElementById('nomeCidade').textContent = `${dados.name}, ${dados.sys.country}`;
+            document.getElementById('dataHora').textContent = formatarData(dados.dt);
+            document.getElementById('temperatura').textContent = `${Math.round(dados.main.temp)}°C`;
+            document.getElementById('sensacaoTermica').textContent = `${Math.round(dados.main.feels_like)}°C`;
+            document.getElementById('umidade').textContent = `${dados.main.humidity}%`;
+            document.getElementById('pressao').textContent = `${dados.main.pressure} mb`;
+            document.getElementById('velocidadeVento').textContent = `${(dados.wind.speed * 3.6).toFixed(1)} km/h`;
+            document.getElementById('condicaoTexto').textContent = dados.weather[0].main;
+            document.getElementById('condicaoIcone').textContent = getWeatherIcon(dados.weather[0].description);
+            
+            climaAtual.classList.add('ativo');
+        }
+
+        function exibirPrevisao(listaDados) {
+            const previsao = [];
+            for (let i = 0; i < listaDados.length; i += 8) {
+                previsao.push(listaDados[i]);
+            }
+
+            const previsaoGrid = document.getElementById('previsaoGrid');
+            previsaoGrid.innerHTML = previsao.slice(0, 5).map(item => {
+                const data = new Date(item.dt * 1000);
+                const dataFormatada = data.toLocaleDateString('pt-BR', { weekday: 'short', month: 'short', day: 'numeric' });
+                return `
+                    <div class="previsao-card">
+                        <div style="font-weight: 600; color: var(--cor-primaria); margin-bottom: 0.5rem;">${dataFormatada}</div>
+                        <div class="previsao-icone">${getWeatherIcon(item.weather[0].description)}</div>
+                        <div style="font-weight: bold; margin-bottom: 0.5rem;">
+                            ${Math.round(item.main.temp_max)}° / ${Math.round(item.main.temp_min)}°C
+                        </div>
+                        <div style="font-size: 0.85rem; margin-bottom: 0.5rem;">${item.weather[0].main}</div>
+                        <div style="font-size: 0.8rem;">
+                            💧 ${item.main.humidity}% | 💨 ${(item.wind.speed * 3.6).toFixed(1)} km/h
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            previsaoContainer.classList.add('ativo');
+        }
+
+        buscaForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const cidade = inputCidade.value.trim();
+            if (cidade) {
+                buscarClima(cidade);
+                inputCidade.value = '';
+            }
+        });
+
+        window.addEventListener('load', () => {
+            buscarClima('São Paulo');
+        });
+    </script>
+
+</body>
+</html>
